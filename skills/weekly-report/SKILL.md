@@ -114,7 +114,20 @@ Is there any other work this week that isn't reflected in the commits above?
 - If the user provides additional items, add them under the appropriate project (or a new "Other" section) in the report
 - If the user says no, skip and proceed
 
-## Step 5: Generate the Report
+## Step 5: Ask for Next Week's TODO
+
+After the manual additions, ask the user about their plans for next week. Use `AskUserQuestion`:
+
+```
+Any plans or TODOs for next week?
+(e.g., upcoming features to work on, known issues to fix, meetings, deadlines, etc.)
+```
+
+- If the user provides items, add a "## Next Week TODO" section at the end of the report
+- Group items by project if possible
+- If the user says no, skip and proceed
+
+## Step 6: Generate the Report
 
 Produce a structured English weekly report. Rewrite vague commit messages to be clearer while preserving technical accuracy. Use the full commit message (subject + body) to provide more detailed descriptions. Keep hashes for traceability.
 
@@ -156,6 +169,17 @@ _(omit empty categories)_
 ---
 
 **Total commits**: N across M repositories
+
+---
+
+## Next Week TODO
+
+### Project: <repo-name>
+- Planned task or goal for next week
+- Another planned item
+
+### Project: <repo-name-2>
+- Planned task or goal for next week
 ```
 
 The Summary section should be more detailed:
@@ -163,7 +187,7 @@ The Summary section should be more detailed:
 - Summarize the key accomplishments and progress for each project in 2-3 bullet points
 - Highlight any notable changes, blockers resolved, or milestones reached
 
-## Step 6: Output
+## Step 7: Output
 
 1. Save to `weekly-report-wXX.md` in the current working directory (where XX is the ISO week number, e.g. `weekly-report-w27.md`)
 2. Display the full report in the terminal
