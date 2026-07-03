@@ -59,11 +59,13 @@ Check in this priority order — first match wins:
      --author="<username>" \
      --since="<monday> 00:00:00" \
      --until="<saturday> 00:00:00" \
-     --pretty=format:"%h|%s|%ai|%an" \
+     --pretty=format:"COMMIT:%h|%s|%ai|%an%nBODY:%B%nEND" \
      --no-merges
    ```
 
    If empty, retry with `--author=<email>`.
+   - `%s` gives the subject line; `%B` gives the full message body
+   - Use both to capture the complete context of each commit
 
 3. **Get repo name**: `basename $(git rev-parse --show-toplevel)`
 
@@ -98,9 +100,21 @@ Classify each commit by keyword matching (case-insensitive) on the commit messag
 
 First match wins.
 
-## Step 4: Generate the Report
+## Step 4: Ask for Manual Additions
 
-Produce a structured English weekly report. Rewrite vague commit messages to be clearer while preserving technical accuracy. Keep hashes for traceability.
+After collecting and categorizing commits from all repositories, ask the user if there is any additional work not captured in git/svn that should be included. Use `AskUserQuestion`:
+
+```
+Is there any other work this week that isn't reflected in the commits above?
+(e.g., code reviews, design discussions, meetings, on-call incidents, documentation in other tools, etc.)
+```
+
+- If the user provides additional items, add them under the appropriate project (or a new "Other" section) in the report
+- If the user says no, skip and proceed
+
+## Step 5: Generate the Report
+
+Produce a structured English weekly report. Rewrite vague commit messages to be clearer while preserving technical accuracy. Use the full commit message (subject + body) to provide more detailed descriptions. Keep hashes for traceability.
 
 ```markdown
 # Weekly Report — Week of YYYY-MM-DD
@@ -129,18 +143,25 @@ _(omit empty categories)_
 
 ### Project: <repo-name>
 - N commits | Category1: X, Category2: Y
-- One-sentence summary of the key work done in this repository this week
+- Key accomplishment or progress made this week
+- Notable changes, milestones, or blockers resolved
 
 ### Project: <repo-name-2>
 - N commits | Category1: X, Category2: Y
-- One-sentence summary of the key work done in this repository this week
+- Key accomplishment or progress made this week
+- Notable changes, milestones, or blockers resolved
 
 ---
 
 **Total commits**: N across M repositories
 ```
 
-## Step 5: Output
+The Summary section should be more detailed:
+- List commit counts and category breakdown
+- Summarize the key accomplishments and progress for each project in 2-3 bullet points
+- Highlight any notable changes, blockers resolved, or milestones reached
+
+## Step 6: Output
 
 1. Save to `weekly-report-YYYY-MM-DD.md` in the current working directory
 2. Display the full report in the terminal
