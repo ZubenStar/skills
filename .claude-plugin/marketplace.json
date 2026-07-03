@@ -1,0 +1,22 @@
+{
+  "name": "tufzh-skills",
+  "owner": {
+    "name": "tufzh",
+    "email": ""
+  },
+  "metadata": {
+    "description": "Custom skills collection",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "weekly-report",
+      "description": "Generate English weekly reports from Git/SVN commit history",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/weekly-report"
+      ]
+    }
+  ]
+}
