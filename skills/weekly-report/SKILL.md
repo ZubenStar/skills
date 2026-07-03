@@ -127,9 +127,17 @@ _(omit empty categories)_
 
 ## Summary
 
-- **Total commits**: N across M repositories
-- **Key highlights**:
-  - 1-2 sentence summary of the most important work this week
+### Project: <repo-name>
+- N commits | Category1: X, Category2: Y
+- One-sentence summary of the key work done in this repository this week
+
+### Project: <repo-name-2>
+- N commits | Category1: X, Category2: Y
+- One-sentence summary of the key work done in this repository this week
+
+---
+
+**Total commits**: N across M repositories
 ```
 
 ## Step 5: Output
