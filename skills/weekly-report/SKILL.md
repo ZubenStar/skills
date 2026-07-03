@@ -7,13 +7,18 @@ description: Generate an English weekly report from Git/SVN commit history. Use 
 
 Generate a structured English weekly report based on the user's commits from this Monday to today.
 
-## Arguments
+## Step 0: Ask for Repositories
 
-The user provides one or more repository paths as arguments. If no arguments are provided, use the current working directory.
+Ask the user which repositories to include in the report. Use `AskUserQuestion` to ask:
 
-Usage examples:
-- `/weekly-report /path/to/repo1 /path/to/repo2`
-- `/weekly-report` (use CWD)
+```
+Which repositories should I include in the weekly report?
+Please provide the paths (comma-separated or one per line).
+```
+
+- The user can enter absolute or relative paths
+- Resolve relative paths to absolute before proceeding
+- If a path doesn't exist or is not a valid repo, warn and skip
 
 ## Step 1: Determine the Date Range
 
@@ -30,12 +35,14 @@ date +%Y-%m-%d
 
 ## Step 2: Process Each Repository
 
-For each provided path, detect the repo type and collect commits.
+For each selected path, detect the repo type and collect commits.
 
-### Detection
-- **Git**: `.git` directory or file exists
-- **SVN**: `.svn` directory exists
-- Otherwise, skip with a warning
+### Detection Order
+
+Check in this priority order — first match wins:
+1. **Git**: `.git` directory or file exists → treat as Git repository
+2. **SVN**: `.svn` directory exists → treat as SVN repository
+3. Otherwise: skip with a warning
 
 ### Git Repositories
 
