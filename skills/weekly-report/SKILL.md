@@ -5,7 +5,7 @@ description: Generate an English weekly report from Git/SVN commit history. Use 
 
 # Weekly Report Generator
 
-Generate a structured English weekly report based on the user's commits from this Monday to today.
+Generate a structured English weekly report based on the user's commits from this Monday to Sunday.
 
 ## Step 0: Ask for Repositories
 
@@ -22,15 +22,17 @@ Please provide the paths (comma-separated or one per line).
 
 ## Step 1: Determine the Date Range
 
-Calculate the date range for this week:
+Calculate the date range for this week (Monday to Sunday):
 - **Start**: This Monday at 00:00:00 (local time)
-- **End**: Today
+- **End**: This Sunday at 23:59:59 (local time)
 
 ```bash
 # Get this Monday
 date -d "last monday" +%Y-%m-%d
-# Get today
-date +%Y-%m-%d
+# Get this Sunday
+date -d "next sunday" +%Y-%m-%d
+# Get week number (ISO week)
+date -d "last monday" +%V
 ```
 
 ## Step 2: Process Each Repository
@@ -58,7 +60,7 @@ Check in this priority order — first match wins:
    git log \
      --author="<username>" \
      --since="<monday> 00:00:00" \
-     --until="<saturday> 00:00:00" \
+     --until="<sunday> 23:59:59" \
      --pretty=format:"COMMIT:%h|%s|%ai|%an%nBODY:%B%nEND" \
      --no-merges
    ```
@@ -79,7 +81,7 @@ Check in this priority order — first match wins:
 
 2. **Collect commits**:
    ```bash
-   svn log -r {<monday>}:{<friday>} . | grep -B1 -A1 "<username>"
+   svn log -r {<monday>}:{<sunday>} . | grep -B1 -A1 "<username>"
    ```
 
 3. **Get repo name**: `basename $(svn info --show-item repos-root-url)`
@@ -117,7 +119,7 @@ Is there any other work this week that isn't reflected in the commits above?
 Produce a structured English weekly report. Rewrite vague commit messages to be clearer while preserving technical accuracy. Use the full commit message (subject + body) to provide more detailed descriptions. Keep hashes for traceability.
 
 ```markdown
-# Weekly Report — Week of YYYY-MM-DD
+# Weekly Report — Week X, YYYY-MM-DD ~ YYYY-MM-DD
 
 ## Project: <repo-name>
 
@@ -163,7 +165,7 @@ The Summary section should be more detailed:
 
 ## Step 6: Output
 
-1. Save to `weekly-report-YYYY-MM-DD.md` in the current working directory
+1. Save to `weekly-report-wXX.md` in the current working directory (where XX is the ISO week number, e.g. `weekly-report-w27.md`)
 2. Display the full report in the terminal
 
 ## Notes
