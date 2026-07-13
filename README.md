@@ -7,6 +7,7 @@ Custom Claude Code skills collection.
 | Skill | Description |
 |-------|-------------|
 | [weekly-report](./skills/weekly-report) | Generate English weekly reports from Git/SVN commit history |
+| [session-memory](./skills/session-memory) | Extract safe, reusable memories from the current conversation |
 
 ## Installation
 
@@ -20,6 +21,7 @@ Then install:
 
 ```
 /plugin install weekly-report@tufzh-skills
+/plugin install session-memory@tufzh-skills
 ```
 
 ### From Local
@@ -32,6 +34,7 @@ Then install:
 
 ```
 /weekly-report /path/to/repo1 /path/to/repo2
+/session-memory Extract reusable memories from this conversation
 ```
 
 ## Creating a Skill

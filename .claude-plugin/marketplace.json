@@ -17,6 +17,15 @@
       "skills": [
         "./skills/weekly-report"
       ]
+    },
+    {
+      "name": "session-memory",
+      "description": "Extract safe, reusable memories from the current conversation",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/session-memory"
+      ]
     }
   ]
 }
