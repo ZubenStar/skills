@@ -1,6 +1,6 @@
 ---
 name: weekly-report
-description: Generate an English weekly report from Git/SVN commit history. Use when the user asks to create a weekly report, summarize their weekly work, or review commits from this week.
+description: Generate an English weekly report from Git/SVN commit history. Automatically detects missed commits from last week. Use when the user asks to create a weekly report, summarize their weekly work, or review commits from this week.
 ---
 
 # Weekly Report Generator
@@ -34,6 +34,45 @@ date -d "next sunday" +%Y-%m-%d
 # Get week number (ISO week)
 date -d "last monday" +%V
 ```
+
+## Step 1.5: Check for Missed Commits from Last Week
+
+Before collecting this week's commits, check if there are any commits from last week that weren't included in last week's report. This handles the common case where the report was submitted before the end of the week (e.g., Friday afternoon) and more commits were made afterwards.
+
+1. **Find last week's report** in the current working directory:
+   ```bash
+   # Calculate last week's ISO week number
+   date -d "last monday - 7 days" +%V
+   # Look for the report file
+   ls weekly-report-w<last_week_number>.md 2>/dev/null
+   ```
+
+2. **If last week's report exists**, read it and extract the commit hashes already included:
+   - Parse all backtick-wrapped hashes from the report (pattern: `` [`<hash>`] ``)
+   - Collect them into a set of "already reported" hashes
+
+3. **For each repository**, collect commits from last week (Monday to Sunday) that are NOT in the reported set:
+   ```bash
+   git log \
+     --author="<username>" \
+     --since="<last_monday> 00:00:00" \
+     --until="<last_sunday> 23:59:59" \
+     --pretty=format:"%H|%h|%s|%ai|%an" \
+     --no-merges
+   ```
+   - Filter out commits whose short hash appears in the "already reported" set
+   - Use `%H` (full hash) for filtering but display `%h` (short hash) in the report
+
+4. **If missed commits are found**, inform the user:
+   ```
+   Found N commit(s) from last week (Week XX) that weren't in the previous report.
+   These will be included at the beginning of this week's report under a
+   "## Late Additions from Last Week" section.
+   ```
+
+5. **If no missed commits**, skip silently and proceed.
+
+6. **If no previous report exists**, skip silently and proceed.
 
 ## Step 2: Process Each Repository
 
@@ -133,6 +172,15 @@ Produce a structured English weekly report. Rewrite vague commit messages to be 
 
 ```markdown
 # Weekly Report — Week X, YYYY-MM-DD ~ YYYY-MM-DD
+
+## Late Additions from Last Week (Week N)
+
+> _Only include this section if missed commits were found in Step 1.5_
+
+### Project: <repo-name>
+- [`<hash>`] <Clear commit message> (YYYY-MM-DD) — carried over from last week
+
+---
 
 ## Project: <repo-name>
 
